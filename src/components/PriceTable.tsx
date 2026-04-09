@@ -58,11 +58,11 @@ export const PriceTable: React.FC<PriceTableProps> = ({ products }) => {
               <TableCell className="text-right font-bold text-primary">
                 {formatNumber(product.newPrice)}
               </TableCell>
-              <TableCell className="text-right text-sm text-orange-600 font-medium">
+              <TableCell className="text-right text-sm text-green-600 font-medium">
                 +{formatNumber(product.diff)}
               </TableCell>
               <TableCell className="text-center">
-                <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 gap-1 font-mono text-[10px]">
+                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 gap-1 font-mono text-[10px]">
                   <ArrowUpIcon className="w-2 h-2" />
                   {product.increaseRate}
                 </Badge>

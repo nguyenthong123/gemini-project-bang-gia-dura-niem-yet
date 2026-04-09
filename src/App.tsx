@@ -6,14 +6,18 @@
 import { useState, useMemo } from 'react';
 import { PRICE_DATA } from './data/prices';
 import { PriceTable } from './components/PriceTable';
+import { LoginPage } from './components/LoginPage';
+import { useAuth } from './contexts/AuthContext';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, FileText, Calendar, Info, Building2, TrendingUp } from 'lucide-react';
+import { Search, FileText, Calendar, Info, Building2, TrendingUp, LogOut, UserCircle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 
 export default function App() {
+  const { user, isLoading, logout } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState(PRICE_DATA[0].id);
 
@@ -30,6 +34,18 @@ export default function App() {
   const totalProducts = useMemo(() => {
     return PRICE_DATA.reduce((acc, cat) => acc + cat.products.length, 0);
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+        <div className="animate-pulse text-primary font-medium">Đang tải...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LoginPage />;
+  }
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-[#1A1A1A] font-sans selection:bg-primary/20">
@@ -52,11 +68,21 @@ export default function App() {
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 bg-orange-50 px-3 py-1.5 rounded-full border border-orange-100">
-                <Calendar className="w-4 h-4 text-orange-600" />
-                <span className="text-sm font-semibold text-orange-700">
+              <div className="flex items-center gap-2 bg-green-50 px-3 py-1.5 rounded-full border border-green-200">
+                <Calendar className="w-4 h-4 text-green-600" />
+                <span className="text-sm font-semibold text-green-700">
                   Áp dụng từ: 07/04/2026
                 </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <UserCircle className="w-4 h-4" />
+                  <span className="hidden sm:inline">{user.name}</span>
+                </div>
+                <Button variant="ghost" size="sm" onClick={logout} className="text-muted-foreground hover:text-destructive">
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline ml-1">Đăng xuất</span>
+                </Button>
               </div>
             </div>
           </div>
@@ -88,7 +114,7 @@ export default function App() {
                 <span className="text-4xl font-bold">{totalProducts}</span>
                 <span className="text-sm text-muted-foreground">mặt hàng</span>
               </div>
-              <div className="mt-4 flex items-center gap-2 text-sm text-orange-600 font-medium">
+              <div className="mt-4 flex items-center gap-2 text-sm text-green-600 font-medium">
                 <TrendingUp className="w-4 h-4" />
                 <span>Mức tăng trung bình: 5% - 8%</span>
               </div>
