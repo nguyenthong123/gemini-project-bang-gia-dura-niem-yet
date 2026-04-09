@@ -24,14 +24,12 @@ interface StoredUser {
   name: string;
 }
 
-function simpleHash(str: string): string {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash |= 0;
-  }
-  return hash.toString(36);
+async function hashPassword(str: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 function getStoredUsers(): StoredUser[] {
@@ -74,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { success: false, error: 'Email chưa được đăng ký. Vui lòng tạo tài khoản mới.' };
     }
 
-    if (found.passwordHash !== simpleHash(password)) {
+    if (found.passwordHash !== await hashPassword(password)) {
       return { success: false, error: 'Mật khẩu không chính xác.' };
     }
 
@@ -108,7 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const newUser: StoredUser = {
       email: trimmedEmail,
-      passwordHash: simpleHash(password),
+      passwordHash: await hashPassword(password),
       name: trimmedName,
     };
 
