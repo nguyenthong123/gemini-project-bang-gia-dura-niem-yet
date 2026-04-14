@@ -1,0 +1,10 @@
+{
+  "scriptId": "YOUR_SCRIPT_ID_HERE",
+  "rootDir": "./src",
+  "fileExtension": "gs",
+  "parentId": [],
+  "projectId": "",
+  "scriptExtensions": [
+    ".gs"
+  ]
+}
